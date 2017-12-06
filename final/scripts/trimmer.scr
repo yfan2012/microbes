@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#SBATCH --job-name=trim_test
+#SBATCH --time=4:00:00
+#SBATCH --partition=parallel
+#SBATCH --account=t-sprehei1
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=22
+
+datadir=~/scratch/class/microbes/final
+
+##executable and adapter locations, I think
+EX_LOC=~/work2/FA17_Methods_dir/lib/Trimmomatic-0.36/trimmomatic-0.36.jar
+AD_LOC=~/work2/FA17_Methods_dir/lib/Trimmomatic-0.36/adapters/NexteraPE-PE.fa
+
+##organize data
+LIB_DIR=~/work2/FA17_Methods_dir/class_raw_data/sprehei1_132645_HISEQ_Mystic_Aug
+
+ASSEM=$datadir/trimmed
+FWD_FQ=`awk "NR==$SLURM_ARRAY_TASK_ID" $datadir/forward.txt`
+REV_FQ=`awk "NR==$SLURM_ARRAY_TASK_ID" $datadir/reverse.txt`
+
+java -jar $EX_LOC PE -threads 22 -phred33 \
+$LIB_DIR/HC3YKBCXY_1_$FWD_FQ  $LIB_DIR/HC3YKBCXY_1_$REV_FQ \
+$ASSEM/${FWD_FQ}_s1_pe $ASSEM/${FWD_FQ}_s1_se $ASSEM/${REV_FQ}_s2_pe $ASSEM/${REV_FQ}_s2_se \
+ILLUMINACLIP:$AD_LOC:2:30:10 \
+LEADING:3 TRAILING:3 SLIDINGWINDOW:4:33 MINLEN:50
+

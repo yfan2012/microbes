@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#SBATCH --job-name=query
+#SBATCH --time=05:00:00
+#SBATCH --account=t-sprehei1
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=22
+
+ml blast/2.2.30
+ml ncbi-blast/2.2.26
+ml seqtk
+
+datadir=~/scratch/class/microbes/final
+fq=`awk "NR==$SLURM_ARRAY_TASK_ID" $datadir/forward.txt`
+prefix=${fq%.fastq}
+
+rawdir=~/work2/FA17_Methods_dir/class_raw_data/sprehei1_132645_HISEQ_Mystic_Aug
+
+seqtk seq -a $rawdir/HC3YKBCXY_1_$prefix.fastq > $datadir/fastas/$prefix.fasta
+
+blastdir=$datadir/blast
+blastn -query $datadir/fastas/$prefix.fasta -db $datadir/db/narGdb -outfmt 7 -out $blastdir/$prefix.tsv
