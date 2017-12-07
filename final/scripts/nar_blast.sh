@@ -1,8 +1,8 @@
 #!/bin/bash
 
-
 datadir=~/scratch/class/microbes/final
 dbdir=$datadir/db
+seqsdir=$datadir/ref_genes
 srcdir=~/Code/microbes/final/scripts
 
 if [ $1 == db ]; then
@@ -30,7 +30,16 @@ if [ $1 == readdb ] ; then
     mkdir -p $datadir/out_logs/readdb
     mkdir -p $datadir/readdb
     mkdir -p $datadir/fastas
-    maxfiles=`wc -l $datadir/forward.txt | cut -d ' ' -f 1`
-    sbatch --output=$datadir/out_logs/readdb/makedb.%A_%a.out --array-1-$maxfiles $srcdir/readdb.scr
-fi
 
+    ##combine gene sequences into one fasta
+    for i in $seqsdir/*fasta;
+    do
+	name=`echo $i | cut -d '/' -f 9 | cut -d '.' -f 1 `
+	fasthead='>'${name}
+	sed -i "1s/.*/$fasthead/" $i
+    done
+    cat $seqsdir/*fasta > $seqsdir/all_genes.fa
+
+    maxfiles=`wc -l $datadir/forward.txt | cut -d ' ' -f 1`
+    sbatch --output=$datadir/out_logs/readdb/makedb.%A_%a.out --array=1-$maxfiles $srcdir/readdb.scr
+fi

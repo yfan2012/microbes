@@ -66,3 +66,5 @@ if [ $1 == split ] ; then
     ##checked that prot file is 400ish MB, so need to split into 2
     perl ~/work2/FA17_Methods_dir/bin/split_fasta.pl /scratch/groups/mschatz1/cpowgs/meta/all_protiens.faa 2
 fi
+
+
