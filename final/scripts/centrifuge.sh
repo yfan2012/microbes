@@ -35,7 +35,16 @@ if [ $1 == query ] ; then
 	    cat $datadir/trimmed/${prefix}_1.fastq_s1_se $datadir/trimmed/${prefix}_2.fastq_s2_se > $datadir/trimmed/${prefix}_unpaired.fastq
 	fi
 
-	$srcdir/centrifuge -x $dbdir/abv -1 $datadir/trimmed/${prefix}_1.fastq_s1_pe -2 $datadir/trimmed/${prefix}_2.fastq_s2_pe -U $datadir/trimmed/${prefix}_unpaired.fastq -S $datadir/classification/$prefix.txt --report-file $datadir/classification/centrifuge_report.tsv
+	$srcdir/centrifuge -x $dbdir/abv -1 $datadir/trimmed/${prefix}_1.fastq_s1_pe -2 $datadir/trimmed/${prefix}_2.fastq_s2_pe -U $datadir/trimmed/${prefix}_unpaired.fastq -S $datadir/classification/$prefix.txt --report-file $datadir/classification/${prefix}_report.tsv
 	
     done <$datadir/forward.txt
+fi
+
+
+if [ $1 == report ] ; then
+    datadir=~/scratch/class/microbes/final
+    while read set ; do
+	prefix=`echo $set | cut -d '_' -f 1`
+	$srcdir/centrifuge-kreport -x $dbdir/abv $datadir/classification/$prefix.txt > $datadir/kreport_$prefix.txt
+    done < $datadir/forward.txt
 fi

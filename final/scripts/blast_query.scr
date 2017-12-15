@@ -20,4 +20,4 @@ rawdir=~/work2/FA17_Methods_dir/class_raw_data/sprehei1_132645_HISEQ_Mystic_Aug
 seqtk seq -a $rawdir/HC3YKBCXY_1_$prefix.fastq > $datadir/fastas/$prefix.fasta
 
 blastdir=$datadir/blast
-blastn -query $datadir/fastas/$prefix.fasta -db $datadir/db/narGdb -outfmt 7 -out $blastdir/$prefix.tsv
+blastn -query $datadir/ref_genes/all_genes.fa -db $datadir/db/${prefix}db -outfmt 7 -out $blastdir/$prefix.tsv

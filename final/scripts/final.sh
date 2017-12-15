@@ -68,3 +68,25 @@ if [ $1 == split ] ; then
 fi
 
 
+if [ $1 == kegglim ] ; then
+    perl ~/work2/FA17_Methods_dir/bin/bin/temp_112117.pl $datadir/ghost/nitrogen_keggids.txt $datadir/ghost/ghost1.txt > $datadir/ghost/key_prots1.txt
+    perl ~/work2/FA17_Methods_dir/bin/bin/temp_112117.pl $datadir/ghost/nitrogen_keggids.txt $datadir/ghost/ghost2.txt > $datadir/ghost/key_prots2.txt
+
+    cat $datadir/ghost/key_prots* > $datadir/ghost/all_key_prots.txt
+    
+    for i in $datadir/align/*.bed ;
+    do
+	prefix=`echo ${i#.bed} | rev | cut -d '/' -f 1 | rev`
+	perl ~/work2/FA17_Methods_dir/bin/bin/temp_052317_2.pl $i $datadir/ghost/all_protiens.faa $datadir/ghost/all_key_prots.txt > $datadir/ghost/$prefix.key_protein_read_map.txt
+    done
+fi
+
+
+if [ $1 == table ] ; then
+    rawdir=~/work2/FA17_Methods_dir/class_raw_data/sprehei1_132645_HISEQ_Mystic_Aug
+    
+    ls $datadir/ghost/*key_protein_read_map.txt > $datadir/ghost/list.txt
+    perl ~/work2/FA17_Methods_dir/bin/bin/temp_052317_3.pl $rawdir/readcount_file_list.txt $datadir/ghost/list.txt $rawdir/primer_sample_pairs.csv > $datadir/ghost/key_protein_table.tab
+
+    perl ~/work2/FA17_Methods_dir/bin/bin/temp_052417.pl $datadir/ghost/key_protein_table.tab > $datadir/KEGG_summary_table.tab
+fi
